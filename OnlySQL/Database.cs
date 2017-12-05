@@ -14,10 +14,10 @@ namespace OnlySQL
         private MySqlConnection _connection;
         private MySqlTransaction _transaction;
 
-        public static string Address { get; set; }
+        public static string Address { get; set; } 
         public static string Port { get; set; }
-        public static string User { get; set; }
-        public static string Password { get; set; }
+        public static string User { get; set; } 
+        public static string Password { get; set; } 
 
         public Database(string database = "main")
         {
