@@ -1,0 +1,11 @@
+var rows = (select * from main.sales);
+
+begin
+{
+	foreach (var row in rows)
+	{
+		(update main.sales SET IsCreatedOnline = 0 WHERE main.Sales.CNTR = @row.CNTR);
+		Console.WriteLine(row.CNTR.ToString() + "  " + row.CardNumber.ToString());
+	}
+	commit;
+}

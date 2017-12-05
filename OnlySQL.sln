@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2009
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlySQL", "OnlySQL\OnlySQL.csproj", "{1CDF956D-1CB0-4C8E-8CAC-63590C20558E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlySQLEditor", "OnlySQLEditor\OnlySQLEditor.csproj", "{DFB995FD-78DA-43D6-BC10-F6BAB735B760}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1CDF956D-1CB0-4C8E-8CAC-63590C20558E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CDF956D-1CB0-4C8E-8CAC-63590C20558E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CDF956D-1CB0-4C8E-8CAC-63590C20558E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CDF956D-1CB0-4C8E-8CAC-63590C20558E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFB995FD-78DA-43D6-BC10-F6BAB735B760}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFB995FD-78DA-43D6-BC10-F6BAB735B760}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFB995FD-78DA-43D6-BC10-F6BAB735B760}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFB995FD-78DA-43D6-BC10-F6BAB735B760}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {408158C6-DE3E-450D-9F35-5F1507B0F363}
+	EndGlobalSection
+EndGlobal
