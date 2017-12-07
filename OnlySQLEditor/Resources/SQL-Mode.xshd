@@ -11,12 +11,13 @@ http://minisqlquery.codeplex.com/license
 	</Properties>
 	<Digits name = "Digits" bold = "true" italic = "false" color="#FF9933"/>
 	<RuleSets>
-		<RuleSet ignorecase = "true">      
-			<Delimiters>&amp;&lt;&gt;~!%^*()-+=|\#/{}[]:;"' ,	.?</Delimiters>
-			<Span name="String" bold="false" italic="false" color="#A31515" stopateol="false">
-				<Begin>'</Begin>
-				<End>'</End>
-			</Span>
+
+    <RuleSet ignorecase = "true">
+      <Delimiters>&amp;&lt;&gt;~!%^*()-+=|\#/{}[]:;"' ,	.?</Delimiters>
+      <Span name="String" bold="false" italic="false" color="#A31515" stopateol="false">
+        <Begin>'</Begin>
+        <End>'</End>
+      </Span>      
       <Span name="String" bold="false" italic="false" color="#A31515" stopateol="false">
         <Begin>"</Begin>
         <End>"</End>
@@ -35,6 +36,10 @@ http://minisqlquery.codeplex.com/license
 				<Begin>/*</Begin>
 				<End>*/</End>
 			</Span>
+      <Span name="XML" rule="insideXML" bold="false" italic="false" stopateol="false" color="#A31515" >
+        <Begin>(&lt;</Begin>
+        <End>&gt;)</End>
+      </Span>
 			<KeyWords name="JoinKeywords" bold="false" italic="false" color="#0000FF">
 				<Key word="INNER" />
 				<Key word="JOIN" />
@@ -279,6 +284,14 @@ http://minisqlquery.codeplex.com/license
 				<Key word="WHILE" />
 				<Key word="WITH" />
 			</KeyWords>
-		</RuleSet>
+    </RuleSet>
+
+    <RuleSet ignorecase = "true" name="insideXML">
+      <Delimiters>&amp;&lt;&gt;</Delimiters>
+      <Span name="XMLTag" bold="false" italic="false" color = "#000000" stopateol="false">
+        <Begin>&gt;</Begin>
+        <End>&lt;</End>
+      </Span>
+    </RuleSet>  
 	</RuleSets>
 </SyntaxDefinition>

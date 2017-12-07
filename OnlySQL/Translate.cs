@@ -85,7 +85,7 @@ namespace OnlySQL
             return source;
         }
 
-        private string Parse(string source, out bool HasUsedMysql, out bool HasUsedJson)
+        private string Parse(string source, out bool HasUsedMysql, out bool HasUsedJson, out bool HasUsedXML)
         {
             if (_trackTime)
             {                
@@ -94,31 +94,32 @@ namespace OnlySQL
 
             HasUsedMysql = false;
             HasUsedJson = false;
+            HasUsedXML = false;
 
-            source = CleanWhiteSpace(source);
+            //source = CleanWhiteSpace(source);
             var builder = new StringBuilder();
             var InSQLBuilder = new StringBuilder();
             bool inExternalBlock = false;
             bool wasMysql = false;
+            bool wasXML = false;
             int startLevel = 0;
             int level = 0;
             string prevWord = "";
             
             foreach (var word in ParseWords(source))
-            {                
+            {
+                Console.WriteLine(word);
                 string lword = word.ToLower();
                 
                 if (word.StartsWith("\"") && word.EndsWith("\"") || word.StartsWith("'") && word.EndsWith("'"))
                 {
                     if (inExternalBlock)
                     {                                                
-                        InSQLBuilder.Append(word + " ");
+                        InSQLBuilder.Append(word);
                     }
                     else
-                    {
-                        if (builder.Length > 0 && prevWord == "@")
-                            builder.Length--;
-                        builder.Append(word + " ");
+                    {                        
+                        builder.Append(word);
                     }
                 }
                 else
@@ -135,8 +136,7 @@ namespace OnlySQL
                             if(wasMysql)
                             {
                                 string args = "";
-                                builder.Append(ParseSQLAndArgs(InSQLBuilder.ToString(), out args));
-                                InSQLBuilder = new StringBuilder();
+                                builder.Append(ParseSQLAndArgs(InSQLBuilder.ToString(), out args));                                
 
                                 builder.Append("\"");
 
@@ -147,13 +147,21 @@ namespace OnlySQL
                                 HasUsedMysql = true;
                                 wasMysql = false;                                
                             }
+                            else if (wasXML)
+                            {
+                                builder.Append(InSQLBuilder.ToString().Replace("\"", "\"\""));
+                                builder.Append("\"");
+                                wasXML = false;
+                                HasUsedXML = true;
+                            }
                             else
                             {
-                                builder.Append(InSQLBuilder.ToString().Replace("\"", "\\\""));
+                                builder.Append(InSQLBuilder.ToString().Replace("\"", "\"\""));
                                 builder.Append("\"");
 
                                 HasUsedJson = true;
-                            }                            
+                            }
+                            InSQLBuilder = new StringBuilder();
                             inExternalBlock = false;                            
                         }
 
@@ -165,27 +173,33 @@ namespace OnlySQL
                     (lword == "delete") ||
                     (lword == "update") ||
                     (lword == "insert") ||
-                    (lword == "{")))
+                    (lword == "{") ||
+                     (lword == "<")))
                     {
                         builder.Length -= 2;
                         if (lword[0] == 's')
                         {
-                            builder.Append("db.ReadData(@\"" + word + " ");
+                            builder.Append("db.ReadData(@\"" + word);
                         }
                         else if (lword[0] == 'd' || lword[0] == 'u')
                         {
-                            builder.Append("db.SetDataReturnNone(@\"" + word + " ");
+                            builder.Append("db.SetDataReturnNone(@\"" + word);
                         }
                         else if (lword[0] == '{')
                         {
-                            builder.Append("JsonConvert.DeserializeObject(\"" + word + " ");                            
+                            builder.Append("OnlySQL.JSON.Parse(@\"" + word);                            
+                        }
+                        else if (lword[0] == '<')
+                        {
+                            builder.Append("OnlySQL.XML.Parse(@\"" + word);
                         }
                         else
                         {                            
-                            builder.Append("db.SetDataReturnLastInsertId(@\"" + word + " ");
+                            builder.Append("db.SetDataReturnLastInsertId(@\"" + word);
                         }
-
-                        wasMysql = lword[0] != '{'; 
+                        wasXML = lword[0] == '<';
+                        wasMysql = lword[0] != '{' && !wasXML;
+                        
 
                         startLevel = level;
                         inExternalBlock = true;
@@ -196,10 +210,7 @@ namespace OnlySQL
 
                     if (inExternalBlock)
                     {
-                        if (word == "(" && InSQLBuilder.Length > 0)
-                            InSQLBuilder.Length--;
-
-                        InSQLBuilder.Append(word + " ");
+                        InSQLBuilder.Append(word);
                     }
                     else
                     {
@@ -221,7 +232,7 @@ namespace OnlySQL
                         }
                         else
                         {
-                            builder.Append(word + " ");
+                            builder.Append(word);
                         }
                     }
 
@@ -229,9 +240,7 @@ namespace OnlySQL
              
                 prevWord = word;
             }
-            if (builder.Length > 0)
-                builder.Length--;
-
+            
             if(_trackTime)
             {
                 sw.Stop();
@@ -308,8 +317,8 @@ namespace OnlySQL
                     }
                     else
                     {
-                        if (source[i] == ';' || source[i] == '(' || source[i] == ')' || source[i] == '+' || source[i] == '-' || source[i] == '{' || source[i] == '}' || source[i] == '/' || source[i] == '*')
-                        {
+                        if (source[i] == ';' || source[i] == '(' || source[i] == ')' || source[i] == '+' || source[i] == '-' || source[i] == '{' || source[i] == '}' || source[i] == '/' || source[i] == '*' || source[i] == '>' ||  source[i] == '<')
+                        {                            
                             if (builder.Length > 0)
                             {
                                 yield return builder.ToString();
@@ -329,6 +338,8 @@ namespace OnlySQL
 
                                     builder = new StringBuilder();
                                 }
+
+                                yield return source[i].ToString();
                             }
                             else
                             {
@@ -340,7 +351,20 @@ namespace OnlySQL
             }
             if (builder.Length > 0)
             {
-                yield return builder.ToString();
+                var x = builder.ToString(); 
+
+                if(x.StartsWith("'") || x.StartsWith("\""))
+                {
+                    yield return x[0].ToString();
+                    foreach (var item in ParseWords(x.Substring(1)))
+                    {
+                        yield return item;
+                    }
+                }
+                else
+                {
+                    yield return x;
+                }                
             }
         }
         Stopwatch sw;
@@ -353,6 +377,7 @@ namespace OnlySQL
             CSScript.Evaluator.ReferenceAssemblyByNamespace("System.Collections.Generic");
             CSScript.Evaluator.ReferenceAssemblyByNamespace("System.IO.FileSystem");
             CSScript.Evaluator.ReferenceAssemblyByNamespace("Newtonsoft.Json");
+            CSScript.Evaluator.ReferenceAssemblyByNamespace("System.Xml");
         }
 
         public void Run(string source, bool trackTime = false)
@@ -365,7 +390,8 @@ namespace OnlySQL
             }
             bool addUsingDb = false;
             bool addUsingJson = false;
-            source = Parse(source, out addUsingDb, out addUsingJson);
+            bool addUsingXML = false;
+            source = Parse(source, out addUsingDb, out addUsingJson, out addUsingXML);
 
             if(addUsingDb)
             {
@@ -388,6 +414,9 @@ using MySql.Data.MySqlClient;" : "") +
 using Newtonsoft;
 using Newtonsoft.Json;" : "") + 
 
+(addUsingXML ? @"
+using System.Xml;" : "") + 
+
 @"
 using System.Linq;
 using System.Collections;
@@ -399,10 +428,19 @@ void main()
 }";
             if(trackTime)
                 Console.WriteLine("CSharp: [" + source + "]");
-            
-            var main = CSScript.Evaluator
-                                  .CreateDelegate(source);            
-            main();
+
+            try
+            {
+
+                var main = CSScript.Evaluator
+                                      .CreateDelegate(source);
+                main();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
 
             if (_trackTime)
             {
