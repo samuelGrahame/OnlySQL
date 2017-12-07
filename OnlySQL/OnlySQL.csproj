@@ -158,9 +158,6 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
-    <None Include="Resources\SQL-Mode.xshd">
-      <SubType>Designer</SubType>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="docs\MySqlCommand.xml" />
@@ -174,9 +171,6 @@
     <Content Include="docs\MySqlParameter.xml" />
     <Content Include="docs\MySqlParameterCollection.xml" />
     <Content Include="docs\MySqlTransaction.xml" />
-    <None Include="Resources\SyntaxModes.xml">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="Resources\demoSource.txt" />
   </ItemGroup>
   <ItemGroup>

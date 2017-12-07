@@ -27,7 +27,10 @@ namespace OnlySQLEditor
             OutputTextEditor.Dock = DockStyle.Fill;
             OutputTextEditor.IsReadOnly = true;
             OutputTextEditor.ShowLineNumbers = false;
-            OutputTextEditor.ShowHRuler = false;            
+            OutputTextEditor.ShowHRuler = false;
+
+
+            OutputTextEditor.SetHighlighting("SQL");
 
             groupBox1.Controls.Add(OutputTextEditor);
             var consoleWriter = new ConsoleWriter();
@@ -73,10 +76,7 @@ namespace OnlySQLEditor
                 Dock = DockStyle.Fill
             };
 
-            editor.Font = new Font("Consolas", 10, FontStyle.Regular);
-            
-            HighlightingManager.Manager.AddSyntaxModeFileProvider(
-                    new SyntaxModeFileProvider());
+            editor.Font = new Font("Consolas", 10, FontStyle.Regular);                       
 
             editor.SetHighlighting("SQL");
 

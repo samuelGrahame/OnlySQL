@@ -84,12 +84,14 @@ namespace OnlySQL
             return source;
         }
 
-        private string Parse(string source)
+        private string Parse(string source, out bool HasUsedMysql)
         {
             if (_trackTime)
             {                
                 Console.WriteLine("Started: Parsing Source");
             }
+
+            HasUsedMysql = false;
 
             source = CleanWhiteSpace(source);
             var builder = new StringBuilder();
@@ -98,75 +100,93 @@ namespace OnlySQL
             int startLevel = 0;
             int level = 0;
             string prevWord = "";
-
+            
             foreach (var word in ParseWords(source))
-            {
-                if(word == "(")
-                {                    
-                    level++;
-                }
-                else if (word == ")")
-                {
-                    if(inSQL && level == startLevel)
-                    {
-                        string args = "";
-                        builder.Append(ParseSQLAndArgs(InSQLBuilder.ToString(), out args));
-                        InSQLBuilder = new StringBuilder();
-                        
-                        builder.Append("\"");
-
-                        if(!string.IsNullOrWhiteSpace(args))
-                        {
-                            builder.Append(", " + args);
-                        }
-
-                        inSQL = false;
-                    }
-
-                    level--;                    
-                }
+            {                
                 string lword = word.ToLower();
-
-                if (!inSQL && prevWord == "(" && 
-                    (lword == "select") ||
-                    (lword == "delete") ||
-                    (lword == "update") ||
-                    (lword == "insert"))
+                
+                if (word.StartsWith("\"") && word.EndsWith("\"") || word.StartsWith("'") && word.EndsWith("'"))
                 {
-                    builder.Length-=2;
-                    if (lword[0] == 's')
-                    {
-                        builder.Append("db.ReadData(@\"" + word + " ");
-                    }else if (lword[0] == 'd' || lword[0] == 'u')
-                    {
-                        builder.Append("db.SetDataReturnNone(@\"" + word + " ");
-                    }
-                    else
-                    {
-                        builder.Append("db.SetDataReturnLastInsertId(@\"" + word + " ");
-                    }
-
-                    startLevel = level;
-                    inSQL = true;
-
-
-                }
-                else
-                {
-                    if(inSQL)
-                    {
-                        if (word == "(" && InSQLBuilder.Length > 0)
-                            InSQLBuilder.Length--;
+                    if (inSQL)
+                    {                        
                         InSQLBuilder.Append(word + " ");
                     }
                     else
                     {
-                        
+
+                        builder.Append(word + " ");
+                    }
+                }
+                else
+                {
+                    if (word == "(")
+                    {
+                        level++;
+                    }
+                    else if (word == ")")
+                    {
+                        if (inSQL && level == startLevel)
+                        {
+                            string args = "";
+                            builder.Append(ParseSQLAndArgs(InSQLBuilder.ToString(), out args));
+                            InSQLBuilder = new StringBuilder();
+
+                            builder.Append("\"");
+
+                            if (!string.IsNullOrWhiteSpace(args))
+                            {
+                                builder.Append(", " + args);
+                            }
+                            HasUsedMysql = true;
+                            inSQL = false;
+                        }
+
+                        level--;
+                    }
+
+                    if (!inSQL && prevWord == "(" &&
+                    (lword == "select") ||
+                    (lword == "delete") ||
+                    (lword == "update") ||
+                    (lword == "insert"))
+                    {
+                        builder.Length -= 2;
+                        if (lword[0] == 's')
+                        {
+                            builder.Append("db.ReadData(@\"" + word + " ");
+                        }
+                        else if (lword[0] == 'd' || lword[0] == 'u')
+                        {
+                            builder.Append("db.SetDataReturnNone(@\"" + word + " ");
+                        }
+                        else
+                        {
+                            builder.Append("db.SetDataReturnLastInsertId(@\"" + word + " ");
+                        }
+
+                        startLevel = level;
+                        inSQL = true;
+
+                        prevWord = word;
+                        continue;
+                    }
+
+                    if (inSQL)
+                    {
+                        if (word == "(" && InSQLBuilder.Length > 0)
+                            InSQLBuilder.Length--;
+
+                        InSQLBuilder.Append(word + " ");
+                    }
+                    else
+                    {
+
                         if (lword == "commit")
                         {
                             //TransactionCommit
                             builder.Append("db.TransactionCommit()");
-                        }else if (lword == "revoke")
+                        }
+                        else if (lword == "revoke")
                         {
                             //TransactionCommit
                             builder.Append("db.TransactionRollback()");
@@ -179,10 +199,14 @@ namespace OnlySQL
                         else
                         {
                             builder.Append(word + " ");
-                        }                        
+                        }
                     }
-                    
-                }                
+
+                }
+
+
+                
+             
                 prevWord = word;
             }
             if (builder.Length > 0)
@@ -202,23 +226,44 @@ namespace OnlySQL
         {
             int length = source.Length;
             var builder = new StringBuilder();
+            var strBuilder = new StringBuilder();
+
+            bool inDoubleQuote = false;
+            bool inSingleQuote = false;
+
 
             for (int i = 0; i < length; i++)
             {
-                if (source[i] == ';' || source[i] == '(' || source[i] == ')' || source[i] == '+' || source[i] == '-' || source[i] == '{' || source[i] == '}' || source[i] == '/' || source[i] == '*')
+                if(inDoubleQuote)
                 {
-                    if (builder.Length > 0)
+                    builder.Append(source[i]);
+
+                    if (source[i] == '\"')
                     {
                         yield return builder.ToString();
 
                         builder = new StringBuilder();
+
+                        inDoubleQuote = false;
                     }
 
-                    yield return source[i].ToString();
+                }
+                else if(inSingleQuote)
+                {
+                    builder.Append(source[i]);
+
+                    if (source[i] == '\'')
+                    {                        
+                        yield return builder.ToString();
+
+                        builder = new StringBuilder();                        
+
+                        inSingleQuote = false;                        
+                    }
                 }
                 else
                 {
-                    if (char.IsWhiteSpace(source[i]))
+                    if(source[i] == '\"')
                     {
                         if (builder.Length > 0)
                         {
@@ -226,13 +271,52 @@ namespace OnlySQL
 
                             builder = new StringBuilder();
                         }
+
+                        inDoubleQuote = true;
+                        builder.Append(source[i]);
+                    }else if (source[i] == '\'')
+                    {
+                        if (builder.Length > 0)
+                        {
+                            yield return builder.ToString();
+
+                            builder = new StringBuilder();
+                        }
+
+                        inSingleQuote = true;
+                        builder.Append(source[i]);
                     }
                     else
                     {
-                        builder.Append(source[i]);
+                        if (source[i] == ';' || source[i] == '(' || source[i] == ')' || source[i] == '+' || source[i] == '-' || source[i] == '{' || source[i] == '}' || source[i] == '/' || source[i] == '*')
+                        {
+                            if (builder.Length > 0)
+                            {
+                                yield return builder.ToString();
+
+                                builder = new StringBuilder();
+                            }
+
+                            yield return source[i].ToString();
+                        }
+                        else
+                        {
+                            if (char.IsWhiteSpace(source[i]))
+                            {
+                                if (builder.Length > 0)
+                                {
+                                    yield return builder.ToString();
+
+                                    builder = new StringBuilder();
+                                }
+                            }
+                            else
+                            {
+                                builder.Append(source[i]);
+                            }
+                        }
                     }
-                }
-                
+                }                
             }
             if (builder.Length > 0)
             {
@@ -258,25 +342,36 @@ namespace OnlySQL
             {
                 sw = Stopwatch.StartNew();
             }
-            
-            var main = CSScript.Evaluator
-                                  .CreateDelegate(
-@"
-using System;
+            bool addUsingDb = false;
+            source = Parse(source, out addUsingDb);
+
+            if(addUsingDb)
+            {
+                source = 
+@"using(OnlySQL.Database db = new OnlySQL.Database())
+{
+" + source + @"
+}";
+            }
+
+            source = 
+@"using System;" + (addUsingDb ? @"
 using MySql;
 using MySql.Data;
-using MySql.Data.MySqlClient;
+using MySql.Data.MySqlClient;" : "") + @"
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 
 void main()
 {
-using(OnlySQL.Database db = new OnlySQL.Database())
-{
-" + Parse(source) + @"
-}
-}");
+" + source +  @"
+}";
+            if(trackTime)
+                Console.WriteLine("CSharp: [" + source + "]");
+
+            var main = CSScript.Evaluator
+                                  .CreateDelegate(source);
             main();
 
             if (_trackTime)

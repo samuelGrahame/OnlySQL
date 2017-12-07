@@ -19,7 +19,7 @@ namespace OnlySQL
                 {
                     var x = new Translate();
                     x.Run( 
-                        System.IO.File.ReadAllText(args[0]));
+                        System.IO.File.ReadAllText(args[0]));                    
                 }                
             }
             else

@@ -13,11 +13,11 @@ http://minisqlquery.codeplex.com/license
 	<RuleSets>
 		<RuleSet ignorecase = "true">      
 			<Delimiters>&amp;&lt;&gt;~!%^*()-+=|\#/{}[]:;"' ,	.?</Delimiters>
-			<Span name="String" bold="false" italic="false" color="#999933" stopateol="false">
+			<Span name="String" bold="false" italic="false" color="#A31515" stopateol="false">
 				<Begin>'</Begin>
 				<End>'</End>
 			</Span>
-      <Span name="String" bold="false" italic="false" color="#999933" stopateol="false">
+      <Span name="String" bold="false" italic="false" color="#A31515" stopateol="false">
         <Begin>"</Begin>
         <End>"</End>
       </Span>
@@ -28,11 +28,14 @@ http://minisqlquery.codeplex.com/license
 			<Span name = "LineComment" bold = "false" italic = "false" color="#999999" stopateol = "true">
 				<Begin>--</Begin>
 			</Span>
-			<Span name = "BlockComment" bold = "false" italic = "false" color="#999999" stopateol = "false">
+      <Span name = "LineCommentSharp" bold = "false" italic = "false" color="#43A64A" stopateol = "true">
+        <Begin>//</Begin>
+      </Span>
+      <Span name = "BlockComment" bold = "false" italic = "false" color="#43A64A" stopateol = "false">
 				<Begin>/*</Begin>
 				<End>*/</End>
 			</Span>
-			<KeyWords name="JoinKeywords" bold="true" italic="false" color="#6666CC">
+			<KeyWords name="JoinKeywords" bold="false" italic="false" color="#0000FF">
 				<Key word="INNER" />
 				<Key word="JOIN" />
 				<Key word="LEFT" />
@@ -40,26 +43,30 @@ http://minisqlquery.codeplex.com/license
 				<Key word="OUTER" />
 				<Key word="UNION" />
 			</KeyWords>
-			<KeyWords name="AliasKeywords" bold="false" italic="false" color="#6666CC">
+      <KeyWords name="ObjectKeywords" bold="false" italic="false" color="#2B91AF">
+				<Key word="CONSOLE" />
+        <Key word="TOSTRING" />
+      </KeyWords>
+			<KeyWords name="AliasKeywords" bold="false" italic="false" color="#0000FF">
 				<Key word="AS" />
 			</KeyWords>
-			<KeyWords name="ComparisonKeywords" bold="true" italic="false" color="#6666CC">
+			<KeyWords name="ComparisonKeywords" bold="false" italic="false" color="#0000FF">
 				<Key word="AND" />
 				<Key word="OR" />
 				<Key word="LIKE" />
 			</KeyWords>			
-			<KeyWords name="SpecializedKeywords" bold="true" italic="false" color="#6666CC">
+			<KeyWords name="SpecializedKeywords" bold="false" italic="false" color="#0000FF">
 				<Key word="TOP" />
 				<Key word="LIMIT" />
 				<Key word="OPENDATASOURCE" />
 				<Key word="GO" />
 			</KeyWords>
-			<KeyWords name="DestructiveKeywords" bold="true" italic="false" color="#6666CC">
+			<KeyWords name="DestructiveKeywords" bold="false" italic="false" color="#0000FF">
 				<Key word="DROP" />
 				<Key word="DELETE" />
 				<Key word="TRUNCATE" />
 			</KeyWords>
-      <KeyWords name="CSharpKeywords" bold="true" italic="false" color="#6666CC">
+      <KeyWords name="CSharpKeywords" bold="false" italic="false" color="#0000FF">
         <Key word="abstract" />
         <Key word="as" />
         <Key word="base" />
@@ -164,7 +171,7 @@ http://minisqlquery.codeplex.com/license
         <Key word="where" />
         <Key word="yield" />
       </KeyWords>
-			<KeyWords name="SqlKeywordsBold" bold="true" italic="false" color="#6666CC">
+			<KeyWords name="SqlKeywordsBold" bold="false" italic="false" color="#0000FF">
 				<Key word="BEGIN" />
 				<Key word="END" />
 				<Key word="EXEC" />
@@ -179,7 +186,7 @@ http://minisqlquery.codeplex.com/license
 				<Key word="USER" />
 				<Key word="VIEW" />
 			</KeyWords>
-			<KeyWords name="SqlKeywordsNormal" bold="false" italic="false" color="#6666CC">
+			<KeyWords name="SqlKeywordsNormal" bold="false" italic="false" color="#0000FF">
 				<Key word="ADD" />
 				<Key word="ALL" />
 				<Key word="ANY" />
