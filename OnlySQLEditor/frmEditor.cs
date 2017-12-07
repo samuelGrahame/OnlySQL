@@ -95,16 +95,7 @@ namespace OnlySQLEditor
 
         private void runToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if(tabControl1.SelectedIndex >-1)
-            {
-                var editor = (TextEditorControl)tabControl1.TabPages[tabControl1.SelectedIndex].Controls[0];
-
-                var translate = new OnlySQL.Translate();
-
-
-
-                translate.Run(editor.Text, true);
-            }
+            
         }
 
         private void clearToolStripMenuItem_Click(object sender, EventArgs e)
@@ -116,6 +107,32 @@ namespace OnlySQLEditor
         private void newFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             CreateEditor();
+        }
+
+        private void runTestToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (tabControl1.SelectedIndex > -1)
+            {
+                var editor = (TextEditorControl)tabControl1.TabPages[tabControl1.SelectedIndex].Controls[0];
+
+                var translate = new OnlySQL.Translate();
+
+
+
+                translate.Run(editor.Text, true);
+            }
+        }
+
+        private void runToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            if (tabControl1.SelectedIndex > -1)
+            {
+                var editor = (TextEditorControl)tabControl1.TabPages[tabControl1.SelectedIndex].Controls[0];
+
+                var translate = new OnlySQL.Translate();
+                
+                translate.Run(editor.Text, false);
+            }
         }
     }
 }
