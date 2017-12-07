@@ -1,4 +1,5 @@
 ﻿using CSScriptLibrary;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -84,7 +85,7 @@ namespace OnlySQL
             return source;
         }
 
-        private string Parse(string source, out bool HasUsedMysql)
+        private string Parse(string source, out bool HasUsedMysql, out bool HasUsedJson)
         {
             if (_trackTime)
             {                
@@ -92,11 +93,13 @@ namespace OnlySQL
             }
 
             HasUsedMysql = false;
+            HasUsedJson = false;
 
             source = CleanWhiteSpace(source);
             var builder = new StringBuilder();
             var InSQLBuilder = new StringBuilder();
-            bool inSQL = false;
+            bool inExternalBlock = false;
+            bool wasMysql = false;
             int startLevel = 0;
             int level = 0;
             string prevWord = "";
@@ -107,8 +110,8 @@ namespace OnlySQL
                 
                 if (word.StartsWith("\"") && word.EndsWith("\"") || word.StartsWith("'") && word.EndsWith("'"))
                 {
-                    if (inSQL)
-                    {                        
+                    if (inExternalBlock)
+                    {                                                
                         InSQLBuilder.Append(word + " ");
                     }
                     else
@@ -125,30 +128,43 @@ namespace OnlySQL
                     }
                     else if (word == ")")
                     {
-                        if (inSQL && level == startLevel)
+                        if (inExternalBlock && level == startLevel)
                         {
-                            string args = "";
-                            builder.Append(ParseSQLAndArgs(InSQLBuilder.ToString(), out args));
-                            InSQLBuilder = new StringBuilder();
 
-                            builder.Append("\"");
-
-                            if (!string.IsNullOrWhiteSpace(args))
+                            if(wasMysql)
                             {
-                                builder.Append(", " + args);
+                                string args = "";
+                                builder.Append(ParseSQLAndArgs(InSQLBuilder.ToString(), out args));
+                                InSQLBuilder = new StringBuilder();
+
+                                builder.Append("\"");
+
+                                if (!string.IsNullOrWhiteSpace(args))
+                                {
+                                    builder.Append(", " + args);
+                                }
+                                HasUsedMysql = true;
+                                wasMysql = false;                                
                             }
-                            HasUsedMysql = true;
-                            inSQL = false;
+                            else
+                            {
+                                builder.Append(InSQLBuilder.ToString().Replace("\"", "\"\""));
+                                builder.Append("\"");
+
+                                HasUsedJson = true;
+                            }                            
+                            inExternalBlock = false;                            
                         }
 
                         level--;
                     }
 
-                    if (!inSQL && prevWord == "(" &&
+                    if (!inExternalBlock && prevWord == "(" &&
                     (lword == "select") ||
                     (lword == "delete") ||
                     (lword == "update") ||
-                    (lword == "insert"))
+                    (lword == "insert") ||
+                    (lword == "{"))
                     {
                         builder.Length -= 2;
                         if (lword[0] == 's')
@@ -159,19 +175,25 @@ namespace OnlySQL
                         {
                             builder.Append("db.SetDataReturnNone(@\"" + word + " ");
                         }
-                        else
+                        else if (lword[0] == '{')
                         {
+                            builder.Append("JsonConvert.DeserializeObject(@\"" + word + " ");                            
+                        }
+                        else
+                        {                            
                             builder.Append("db.SetDataReturnLastInsertId(@\"" + word + " ");
                         }
 
+                        wasMysql = lword[0] != '{'; 
+
                         startLevel = level;
-                        inSQL = true;
+                        inExternalBlock = true;
 
                         prevWord = word;
                         continue;
                     }
 
-                    if (inSQL)
+                    if (inExternalBlock)
                     {
                         if (word == "(" && InSQLBuilder.Length > 0)
                             InSQLBuilder.Length--;
@@ -203,9 +225,6 @@ namespace OnlySQL
                     }
 
                 }
-
-
-                
              
                 prevWord = word;
             }
@@ -332,6 +351,7 @@ namespace OnlySQL
             CSScript.Evaluator.ReferenceAssemblyByNamespace("System.Linq");
             CSScript.Evaluator.ReferenceAssemblyByNamespace("System.Collections.Generic");
             CSScript.Evaluator.ReferenceAssemblyByNamespace("System.IO.FileSystem");
+            CSScript.Evaluator.ReferenceAssemblyByNamespace("Newtonsoft.Json");
         }
 
         public void Run(string source, bool trackTime = false)
@@ -343,7 +363,8 @@ namespace OnlySQL
                 sw = Stopwatch.StartNew();
             }
             bool addUsingDb = false;
-            source = Parse(source, out addUsingDb);
+            bool addUsingJson = false;
+            source = Parse(source, out addUsingDb, out addUsingJson);
 
             if(addUsingDb)
             {
@@ -355,10 +376,18 @@ namespace OnlySQL
             }
 
             source = 
-@"using System;" + (addUsingDb ? @"
+@"using System;" + 
+
+(addUsingDb ? @"
 using MySql;
 using MySql.Data;
-using MySql.Data.MySqlClient;" : "") + @"
+using MySql.Data.MySqlClient;" : "") +
+
+(addUsingJson ? @"
+using Newtonsoft;
+using Newtonsoft.Json;" : "") + 
+
+@"
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
@@ -369,6 +398,9 @@ void main()
 }";
             if(trackTime)
                 Console.WriteLine("CSharp: [" + source + "]");
+
+            var person = JsonConvert.DeserializeObject(@"{ ""name"" : ""John"" , ""age"" :31, ""city"" : ""New York"" } ");
+
 
             var main = CSScript.Evaluator
                                   .CreateDelegate(source);
