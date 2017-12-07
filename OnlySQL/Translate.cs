@@ -116,7 +116,8 @@ namespace OnlySQL
                     }
                     else
                     {
-
+                        if (builder.Length > 0 && prevWord == "@")
+                            builder.Length--;
                         builder.Append(word + " ");
                     }
                 }
@@ -148,7 +149,7 @@ namespace OnlySQL
                             }
                             else
                             {
-                                builder.Append(InSQLBuilder.ToString().Replace("\"", "\"\""));
+                                builder.Append(InSQLBuilder.ToString().Replace("\"", "\\\""));
                                 builder.Append("\"");
 
                                 HasUsedJson = true;
@@ -160,11 +161,11 @@ namespace OnlySQL
                     }
 
                     if (!inExternalBlock && prevWord == "(" &&
-                    (lword == "select") ||
+                    ((lword == "select") ||
                     (lword == "delete") ||
                     (lword == "update") ||
                     (lword == "insert") ||
-                    (lword == "{"))
+                    (lword == "{")))
                     {
                         builder.Length -= 2;
                         if (lword[0] == 's')
@@ -177,7 +178,7 @@ namespace OnlySQL
                         }
                         else if (lword[0] == '{')
                         {
-                            builder.Append("JsonConvert.DeserializeObject(@\"" + word + " ");                            
+                            builder.Append("JsonConvert.DeserializeObject(\"" + word + " ");                            
                         }
                         else
                         {                            
@@ -398,12 +399,9 @@ void main()
 }";
             if(trackTime)
                 Console.WriteLine("CSharp: [" + source + "]");
-
-            var person = JsonConvert.DeserializeObject(@"{ ""name"" : ""John"" , ""age"" :31, ""city"" : ""New York"" } ");
-
-
+            
             var main = CSScript.Evaluator
-                                  .CreateDelegate(source);
+                                  .CreateDelegate(source);            
             main();
 
             if (_trackTime)
