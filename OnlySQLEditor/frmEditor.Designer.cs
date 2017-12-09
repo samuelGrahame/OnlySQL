@@ -37,11 +37,7 @@
             this.saveFileAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.projectPrefencesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.saveProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.newProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.runToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.runTestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.runToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -82,11 +78,7 @@
             this.saveFileAsToolStripMenuItem,
             this.saveAllToolStripMenuItem,
             this.toolStripSeparator2,
-            this.projectPrefencesToolStripMenuItem,
-            this.toolStripSeparator3,
-            this.saveProjectToolStripMenuItem,
-            this.newProjectToolStripMenuItem,
-            this.openProjectToolStripMenuItem});
+            this.toolStripSeparator3});
             this.fileToolStripMenuItem.Image = global::OnlySQLEditor.Properties.Resources.projectfile_16x16;
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(53, 20);
@@ -96,82 +88,56 @@
             // 
             this.openFileToolStripMenuItem.Image = global::OnlySQLEditor.Properties.Resources.article_16x16;
             this.openFileToolStripMenuItem.Name = "openFileToolStripMenuItem";
-            this.openFileToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+            this.openFileToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.openFileToolStripMenuItem.Text = "Open File...";
+            this.openFileToolStripMenuItem.Click += new System.EventHandler(this.openFileToolStripMenuItem_Click);
             // 
             // newFileToolStripMenuItem
             // 
             this.newFileToolStripMenuItem.Image = global::OnlySQLEditor.Properties.Resources.new_16x16;
             this.newFileToolStripMenuItem.Name = "newFileToolStripMenuItem";
-            this.newFileToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+            this.newFileToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.newFileToolStripMenuItem.Text = "New File...";
             this.newFileToolStripMenuItem.Click += new System.EventHandler(this.newFileToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(171, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
             // 
             // saveFileToolStripMenuItem
             // 
             this.saveFileToolStripMenuItem.Image = global::OnlySQLEditor.Properties.Resources.save_16x16;
             this.saveFileToolStripMenuItem.Name = "saveFileToolStripMenuItem";
-            this.saveFileToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+            this.saveFileToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.saveFileToolStripMenuItem.Text = "Save File...";
+            this.saveFileToolStripMenuItem.Click += new System.EventHandler(this.saveFileToolStripMenuItem_Click);
             // 
             // saveFileAsToolStripMenuItem
             // 
             this.saveFileAsToolStripMenuItem.Image = global::OnlySQLEditor.Properties.Resources.saveas_16x16;
             this.saveFileAsToolStripMenuItem.Name = "saveFileAsToolStripMenuItem";
-            this.saveFileAsToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+            this.saveFileAsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.saveFileAsToolStripMenuItem.Text = "Save File As...";
+            this.saveFileAsToolStripMenuItem.Click += new System.EventHandler(this.saveFileAsToolStripMenuItem_Click);
             // 
             // saveAllToolStripMenuItem
             // 
             this.saveAllToolStripMenuItem.Image = global::OnlySQLEditor.Properties.Resources.saveall_16x16;
             this.saveAllToolStripMenuItem.Name = "saveAllToolStripMenuItem";
-            this.saveAllToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+            this.saveAllToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.saveAllToolStripMenuItem.Text = "Save All...";
+            this.saveAllToolStripMenuItem.Click += new System.EventHandler(this.saveAllToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(171, 6);
-            // 
-            // projectPrefencesToolStripMenuItem
-            // 
-            this.projectPrefencesToolStripMenuItem.Enabled = false;
-            this.projectPrefencesToolStripMenuItem.Image = global::OnlySQLEditor.Properties.Resources.technology_16x16;
-            this.projectPrefencesToolStripMenuItem.Name = "projectPrefencesToolStripMenuItem";
-            this.projectPrefencesToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
-            this.projectPrefencesToolStripMenuItem.Text = "Project Prefences...";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(149, 6);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(171, 6);
-            // 
-            // saveProjectToolStripMenuItem
-            // 
-            this.saveProjectToolStripMenuItem.Enabled = false;
-            this.saveProjectToolStripMenuItem.Image = global::OnlySQLEditor.Properties.Resources.project_16x16;
-            this.saveProjectToolStripMenuItem.Name = "saveProjectToolStripMenuItem";
-            this.saveProjectToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
-            this.saveProjectToolStripMenuItem.Text = "Save Project";
-            // 
-            // newProjectToolStripMenuItem
-            // 
-            this.newProjectToolStripMenuItem.Image = global::OnlySQLEditor.Properties.Resources.projectfile_16x16;
-            this.newProjectToolStripMenuItem.Name = "newProjectToolStripMenuItem";
-            this.newProjectToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
-            this.newProjectToolStripMenuItem.Text = "New Project";
-            // 
-            // openProjectToolStripMenuItem
-            // 
-            this.openProjectToolStripMenuItem.Image = global::OnlySQLEditor.Properties.Resources.projectdirectory_16x16;
-            this.openProjectToolStripMenuItem.Name = "openProjectToolStripMenuItem";
-            this.openProjectToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
-            this.openProjectToolStripMenuItem.Text = "Open Project";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(149, 6);
             // 
             // runToolStripMenuItem
             // 
@@ -184,13 +150,13 @@
             this.runToolStripMenuItem.Name = "runToolStripMenuItem";
             this.runToolStripMenuItem.Size = new System.Drawing.Size(56, 20);
             this.runToolStripMenuItem.Text = "Run";
-            this.runToolStripMenuItem.DropDownOpening += new System.EventHandler(this.runToolStripMenuItem_DropDownOpening);            
+            this.runToolStripMenuItem.DropDownOpening += new System.EventHandler(this.runToolStripMenuItem_DropDownOpening);
             // 
             // runTestToolStripMenuItem
             // 
             this.runTestToolStripMenuItem.Image = global::OnlySQLEditor.Properties.Resources.bugreport_16x16;
             this.runTestToolStripMenuItem.Name = "runTestToolStripMenuItem";
-            this.runTestToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.runTestToolStripMenuItem.Size = new System.Drawing.Size(129, 22);
             this.runTestToolStripMenuItem.Text = "Run Test...";
             this.runTestToolStripMenuItem.Click += new System.EventHandler(this.runTestToolStripMenuItem_Click);
             // 
@@ -198,20 +164,20 @@
             // 
             this.runToolStripMenuItem1.Image = global::OnlySQLEditor.Properties.Resources.play_16x16;
             this.runToolStripMenuItem1.Name = "runToolStripMenuItem1";
-            this.runToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
+            this.runToolStripMenuItem1.Size = new System.Drawing.Size(129, 22);
             this.runToolStripMenuItem1.Text = "Run...";
             this.runToolStripMenuItem1.Click += new System.EventHandler(this.runToolStripMenuItem1_Click);
             // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(126, 6);
             // 
             // stopToolStripMenuItem
             // 
             this.stopToolStripMenuItem.Image = global::OnlySQLEditor.Properties.Resources.stop_16x16;
             this.stopToolStripMenuItem.Name = "stopToolStripMenuItem";
-            this.stopToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.stopToolStripMenuItem.Size = new System.Drawing.Size(129, 22);
             this.stopToolStripMenuItem.Text = "Stop...";
             this.stopToolStripMenuItem.Click += new System.EventHandler(this.stopToolStripMenuItem_Click);
             // 
@@ -310,12 +276,8 @@
         private System.Windows.Forms.ToolStripMenuItem saveFileAsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveAllToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
-        private System.Windows.Forms.ToolStripMenuItem projectPrefencesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openFileToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
-        private System.Windows.Forms.ToolStripMenuItem saveProjectToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem newProjectToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem openProjectToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem runTestToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem runToolStripMenuItem1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;

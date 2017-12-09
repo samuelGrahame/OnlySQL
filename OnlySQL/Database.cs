@@ -37,12 +37,6 @@ namespace OnlySQL
             _connection = new MySqlConnection($"Server={address};Port={port};Uid={user};Pwd='{password}';SslMode=none;Compress=true;ConvertZeroDateTime=true;" + (string.IsNullOrWhiteSpace(database) ? "" : $"Database={database}"));
             
             _connection.Open();
-            var flags = System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance;
-            var driver = _connection.GetType().GetField("driver", flags).GetValue(_connection);
-            if (driver != null)
-            {
-                driver.GetType().GetMethod("Reset").Invoke(driver, null);
-            }
         }
 
         public void BeginTransaction()

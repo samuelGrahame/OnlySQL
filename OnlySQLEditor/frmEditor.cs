@@ -170,5 +170,82 @@ namespace OnlySQLEditor
         {
             translate.Stop();
         }
+
+        private void saveFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (tabControl1.SelectedIndex > -1)
+            {
+                Save(tabControl1.TabPages[tabControl1.SelectedIndex]);                
+            }
+        }
+
+        public void Save(TabPage tab)
+        {
+            var editor = (TextEditorControl)tab.Controls[0];            
+
+            if(tab.Tag == null)
+            {
+                using (SaveFileDialog dlg = new SaveFileDialog())
+                {
+                    if(dlg.ShowDialog() == DialogResult.OK)
+                    {
+                        tab.Tag = dlg.FileName;
+                        tab.Text = System.IO.Path.GetFileName(dlg.FileName);
+                        System.IO.File.WriteAllText((tab.Tag + ""), editor.Text);
+                    }
+                }
+            }
+            else
+            {
+                System.IO.File.WriteAllText((tab.Tag + ""), editor.Text);
+            }
+        }
+
+        private void saveFileAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (tabControl1.SelectedIndex > -1)
+            {
+                SaveAs(tabControl1.TabPages[tabControl1.SelectedIndex]);
+            }
+
+        }
+
+        public void SaveAs(TabPage tab)
+        {
+            var editor = (TextEditorControl)tab.Controls[0];
+
+            using (SaveFileDialog dlg = new SaveFileDialog())
+            {
+                if (dlg.ShowDialog() == DialogResult.OK)
+                {                   
+                    System.IO.File.WriteAllText(dlg.FileName, editor.Text);
+                }
+            }
+        }
+
+        private void saveAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if(tabControl1.TabPages.Count > 0)
+            {
+                foreach (TabPage page in tabControl1.TabPages)
+                {
+                    Save(page);
+                }
+            }
+        }
+
+        private void openFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog dlg = new OpenFileDialog())
+            {
+                if (dlg.ShowDialog() == DialogResult.OK)
+                {
+                    var editor = CreateEditor();
+
+                    editor.Text = System.IO.File.ReadAllText(dlg.FileName);
+                    editor.Parent.Tag = dlg.FileName;                    
+                }
+            }            
+        }
     }
 }

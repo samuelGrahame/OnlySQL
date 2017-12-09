@@ -177,7 +177,7 @@ namespace OnlySQL
                     (lword == "{") ||
                      (lword == "<")))
                     {
-                        builder.Length -= 2;
+                        builder.Length--;
                         if (lword[0] == 's')
                         {
                             builder.Append("db.ReadData(@\"" + word);
