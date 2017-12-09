@@ -2,6 +2,7 @@
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -14,15 +15,27 @@ namespace OnlySQL
         private MySqlConnection _connection;
         private MySqlTransaction _transaction;
 
-        public static string Address { get; set; } 
-        public static string Port { get; set; }
-        public static string User { get; set; } 
-        public static string Password { get; set; } 
+         public Database()
+        {            
+            string address = ConfigurationManager.AppSettings["DataAddress"];
+            string user = ConfigurationManager.AppSettings["DataUser"];
+            string port = ConfigurationManager.AppSettings["DataPort"];
+            string password = ConfigurationManager.AppSettings["DataPassword"];
+            string database = ConfigurationManager.AppSettings["DatabaseName"];
 
-        public Database(string database = "main")
-        {
-            _connection = new MySqlConnection($"Server={Address};Port={Port};Uid={User};Pwd='{Password}';SslMode=none;Compress=true;ConvertZeroDateTime=true;" + (string.IsNullOrWhiteSpace(database) ? "" : $"Database={database}"));
-            //var Settings = _connection.GetType().GetProperty("Settings", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(_connection);            
+
+            // Use default mysql credentials
+            if(string.IsNullOrWhiteSpace(address))
+            {
+                address = "localhost";
+                user = "root";
+                port = "3306";
+                password = "password";
+                database = "";
+            }
+            
+            _connection = new MySqlConnection($"Server={address};Port={port};Uid={user};Pwd='{password}';SslMode=none;Compress=true;ConvertZeroDateTime=true;" + (string.IsNullOrWhiteSpace(database) ? "" : $"Database={database}"));
+            
             _connection.Open();
             var flags = System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance;
             var driver = _connection.GetType().GetField("driver", flags).GetValue(_connection);
