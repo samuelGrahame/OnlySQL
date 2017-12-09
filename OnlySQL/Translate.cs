@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace OnlySQL
@@ -380,73 +381,97 @@ namespace OnlySQL
             CSScript.Evaluator.ReferenceAssemblyByNamespace("System.Xml");
         }
 
-        public void Run(string source, bool trackTime = false)
-        {            
-            //var x = new List<dynamic>();
-            _trackTime = trackTime;
-            if (_trackTime)
-            {
-                sw = Stopwatch.StartNew();
-            }
-            bool addUsingDb = false;
-            bool addUsingJson = false;
-            bool addUsingXML = false;
-            source = Parse(source, out addUsingDb, out addUsingJson, out addUsingXML);
+        public Thread ApplicationThread;
 
-            if(addUsingDb)
+
+        public void Stop()
+        {
+            if (ApplicationThread != null)
             {
-                source = 
-@"using(OnlySQL.Database db = new OnlySQL.Database())
+                ApplicationThread.Abort();
+            }
+        }
+
+        public bool IsRunning()
+        {
+            return ApplicationThread != null && ApplicationThread.IsAlive;
+        }
+
+        public void Run(string source, bool trackTime = false)
+        {
+            if(ApplicationThread != null)
+            {
+                ApplicationThread.Abort();
+            }
+
+            ApplicationThread = new Thread(() => {
+
+                _trackTime = trackTime;
+                if (_trackTime)
+                {
+                    sw = Stopwatch.StartNew();
+                }
+                bool addUsingDb = false;
+                bool addUsingJson = false;
+                bool addUsingXML = false;
+                source = Parse(source, out addUsingDb, out addUsingJson, out addUsingXML);
+
+                if (addUsingDb)
+                {
+                    source =
+    @"using(OnlySQL.Database db = new OnlySQL.Database())
 {
 " + source + @"
 }";
-            }
+                }
 
-            source = 
-@"using System;" + 
+                source =
+    @"using System;" +
 
-(addUsingDb ? @"
+    (addUsingDb ? @"
 using MySql;
 using MySql.Data;
 using MySql.Data.MySqlClient;" : "") +
 
-(addUsingJson ? @"
+    (addUsingJson ? @"
 using Newtonsoft;
-using Newtonsoft.Json;" : "") + 
+using Newtonsoft.Json;" : "") +
 
-(addUsingXML ? @"
-using System.Xml;" : "") + 
+    (addUsingXML ? @"
+using System.Xml;" : "") +
 
-@"
+    @"
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 
 void main()
 {
-" + source +  @"
+" + source + @"
 }";
-            if(trackTime)
-                Console.WriteLine("CSharp: [" + source + "]");
+                if (trackTime)
+                    Console.WriteLine("CSharp: [" + source + "]");
 
-            try
-            {
+                try
+                {
 
-                var main = CSScript.Evaluator
-                                      .CreateDelegate(source);
-                main();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
+                    var main = CSScript.Evaluator
+                                          .CreateDelegate(source);
+                    main();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
 
 
-            if (_trackTime)
-            {
-                sw.Stop();
-                Console.WriteLine("Finished: Running " + sw.ElapsedMilliseconds + "ms");                
-            }
+                if (_trackTime)
+                {
+                    sw.Stop();
+                    Console.WriteLine("Finished: Running " + sw.ElapsedMilliseconds + "ms");
+                }
+            });
+            ApplicationThread.Start();            
         }
     }
 }

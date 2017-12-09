@@ -42,29 +42,59 @@ namespace OnlySQLEditor
             CreateEditor();
         }
 
-        private void ConsoleWriter_WriteLineEvent(object sender, ConsoleWriterEventArgs e)
+        public void WriteLine(string x)
         {
-            if(string.IsNullOrWhiteSpace(OutputTextEditor.Text))
+            if (this.OutputTextEditor.InvokeRequired)
             {
-                OutputTextEditor.Text = e.Value;
+                StringArgReturningVoidDelegate d = new StringArgReturningVoidDelegate(WriteLine);
+                this.Invoke(d, new object[] { x });
             }
             else
             {
-                OutputTextEditor.Text += "\r\n" + e.Value;
+                if (string.IsNullOrWhiteSpace(OutputTextEditor.Text))
+                {
+                    OutputTextEditor.Text = x;
+                }
+                else
+                {
+                    OutputTextEditor.Text += "\r\n" + x;
+                }
+                ScrollToEnd();
             }
-            ScrollToEnd();
+        }
+
+        public void Write(string x)
+        {
+            if (this.OutputTextEditor.InvokeRequired)
+            {
+                StringArgReturningVoidDelegate d = new StringArgReturningVoidDelegate(Write);
+                this.Invoke(d, new object[] { x });
+            }
+            else
+            {
+                OutputTextEditor.Text += x;
+                ScrollToEnd();
+            }
+        }
+
+        delegate void StringArgReturningVoidDelegate(string text);
+        private void ConsoleWriter_WriteLineEvent(object sender, ConsoleWriterEventArgs e)
+        {
+            WriteLine(e.Value);            
+            
         }
 
         private void ScrollToEnd()
         {
             OutputTextEditor.ActiveTextAreaControl.TextArea.Caret.Position = new TextLocation(0, OutputTextEditor.Document.TotalNumberOfLines);
             OutputTextEditor.ActiveTextAreaControl.TextArea.ScrollToCaret();
+
+            Application.DoEvents();
         }
 
         private void ConsoleWriter_WriteEvent(object sender, ConsoleWriterEventArgs e)
         {
-            OutputTextEditor.Text += e.Value;
-            ScrollToEnd();
+            Write(e.Value);            
         }
 
         public TextEditorControl CreateEditor()
@@ -91,12 +121,7 @@ namespace OnlySQLEditor
 
 
             return editor;
-        }
-
-        private void runToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            
-        }
+        }        
 
         private void clearToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -115,24 +140,35 @@ namespace OnlySQLEditor
             {
                 var editor = (TextEditorControl)tabControl1.TabPages[tabControl1.SelectedIndex].Controls[0];
 
-                var translate = new OnlySQL.Translate();
-
-
-
+                translate = new OnlySQL.Translate();                
                 translate.Run(editor.Text, true);
             }
         }
-
+        OnlySQL.Translate translate = null;
         private void runToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             if (tabControl1.SelectedIndex > -1)
             {
                 var editor = (TextEditorControl)tabControl1.TabPages[tabControl1.SelectedIndex].Controls[0];
 
-                var translate = new OnlySQL.Translate();
-                
+                translate = new OnlySQL.Translate();                
                 translate.Run(editor.Text, false);
             }
+        }
+
+        private void runToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
+        {
+            var running = translate != null && translate.IsRunning();
+
+            runTestToolStripMenuItem.Enabled = !running;
+            runToolStripMenuItem1.Enabled = !running;
+
+            stopToolStripMenuItem.Enabled = running;
+        }
+
+        private void stopToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            translate.Stop();
         }
     }
 }

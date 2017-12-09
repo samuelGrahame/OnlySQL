@@ -44,8 +44,9 @@
             this.openProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.runToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.runTestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.runToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.stopToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.outputToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl1 = new System.Windows.Forms.TabControl();
@@ -139,6 +140,7 @@
             // 
             // projectPrefencesToolStripMenuItem
             // 
+            this.projectPrefencesToolStripMenuItem.Enabled = false;
             this.projectPrefencesToolStripMenuItem.Image = global::OnlySQLEditor.Properties.Resources.technology_16x16;
             this.projectPrefencesToolStripMenuItem.Name = "projectPrefencesToolStripMenuItem";
             this.projectPrefencesToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
@@ -151,6 +153,7 @@
             // 
             // saveProjectToolStripMenuItem
             // 
+            this.saveProjectToolStripMenuItem.Enabled = false;
             this.saveProjectToolStripMenuItem.Image = global::OnlySQLEditor.Properties.Resources.project_16x16;
             this.saveProjectToolStripMenuItem.Name = "saveProjectToolStripMenuItem";
             this.saveProjectToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
@@ -174,13 +177,14 @@
             // 
             this.runToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.runTestToolStripMenuItem,
-            this.toolStripSeparator4,
-            this.runToolStripMenuItem1});
+            this.runToolStripMenuItem1,
+            this.toolStripSeparator5,
+            this.stopToolStripMenuItem});
             this.runToolStripMenuItem.Image = global::OnlySQLEditor.Properties.Resources.showtestreport_16x16;
             this.runToolStripMenuItem.Name = "runToolStripMenuItem";
             this.runToolStripMenuItem.Size = new System.Drawing.Size(56, 20);
             this.runToolStripMenuItem.Text = "Run";
-            this.runToolStripMenuItem.Click += new System.EventHandler(this.runToolStripMenuItem_Click);
+            this.runToolStripMenuItem.DropDownOpening += new System.EventHandler(this.runToolStripMenuItem_DropDownOpening);            
             // 
             // runTestToolStripMenuItem
             // 
@@ -190,18 +194,26 @@
             this.runTestToolStripMenuItem.Text = "Run Test...";
             this.runTestToolStripMenuItem.Click += new System.EventHandler(this.runTestToolStripMenuItem_Click);
             // 
-            // toolStripSeparator4
-            // 
-            this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(149, 6);
-            // 
             // runToolStripMenuItem1
             // 
-            this.runToolStripMenuItem1.Image = global::OnlySQLEditor.Properties.Resources.next_16x16;
+            this.runToolStripMenuItem1.Image = global::OnlySQLEditor.Properties.Resources.play_16x16;
             this.runToolStripMenuItem1.Name = "runToolStripMenuItem1";
             this.runToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
             this.runToolStripMenuItem1.Text = "Run...";
             this.runToolStripMenuItem1.Click += new System.EventHandler(this.runToolStripMenuItem1_Click);
+            // 
+            // toolStripSeparator5
+            // 
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            this.toolStripSeparator5.Size = new System.Drawing.Size(149, 6);
+            // 
+            // stopToolStripMenuItem
+            // 
+            this.stopToolStripMenuItem.Image = global::OnlySQLEditor.Properties.Resources.stop_16x16;
+            this.stopToolStripMenuItem.Name = "stopToolStripMenuItem";
+            this.stopToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.stopToolStripMenuItem.Text = "Stop...";
+            this.stopToolStripMenuItem.Click += new System.EventHandler(this.stopToolStripMenuItem_Click);
             // 
             // outputToolStripMenuItem
             // 
@@ -305,7 +317,8 @@
         private System.Windows.Forms.ToolStripMenuItem newProjectToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openProjectToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem runTestToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripMenuItem runToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
+        private System.Windows.Forms.ToolStripMenuItem stopToolStripMenuItem;
     }
 }
